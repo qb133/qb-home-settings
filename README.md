@@ -7,8 +7,8 @@ My portable vim + shell + tmux settings. Clone onto a new Mac and run the instal
 | File        | Installed to   | Notes |
 |-------------|----------------|-------|
 | `vimrc`     | `~/.vimrc`      | Uses the gruvbox colorscheme (auto-cloned on install). |
-| `bashrc`    | `~/.bashrc`     | Despite the name this is **zsh** config — prompt, aliases, `set -o vi`. |
-| `tmux.conf` | `~/.tmux.conf`  | Mouse scroll/select + focus events (so vim's `autoread` works inside tmux). |
+| `bashrc`    | `~/.bashrc`     | Despite the name this is **zsh** config — prompt, aliases, `set -o vi`, `$EDITOR`. |
+| `tmux.conf` | `~/.tmux.conf`  | Mouse, focus events, vi copy mode, 50k scrollback, cwd-inheriting splits. |
 
 > **Why "bashrc" holds zsh syntax:** the login shell on this setup is zsh, and
 > `~/.zshrc` does `source ~/.bashrc`. The installer wires that up automatically.
