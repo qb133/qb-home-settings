@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Installs vim + shell dotfiles by symlinking them into $HOME.
+# Installs vim + shell + tmux dotfiles by symlinking them into $HOME.
 # Existing files are backed up (never overwritten) before linking.
 # Safe to re-run.
 
@@ -24,8 +24,9 @@ link() {
 }
 
 # 1. dotfiles
-link "$DOTFILES_DIR/vimrc"  "$HOME/.vimrc"
-link "$DOTFILES_DIR/bashrc" "$HOME/.bashrc"
+link "$DOTFILES_DIR/vimrc"     "$HOME/.vimrc"
+link "$DOTFILES_DIR/bashrc"    "$HOME/.bashrc"
+link "$DOTFILES_DIR/tmux.conf" "$HOME/.tmux.conf"
 
 # 2. vim gruvbox colorscheme (referenced by vimrc)
 GRUVBOX="$HOME/.vim/pack/colors/start/gruvbox"
