@@ -13,11 +13,7 @@ alias lla='ls -la'
 
 set -o vi
 
-# macOS's `vi` is already vim 9.x and reads this repo's vimrc, so this is mostly
-# for tools that check $VISUAL first, and for machines where `vi` is a stripped
-# down build or the fallback is nano.
-export VISUAL=vim
-export EDITOR="$VISUAL"
+export VISUAL=vim EDITOR=vim
 
 # Tool integrations: only source these if the tool is actually installed,
 # so a fresh machine without rust/uv doesn't throw "no such file" errors.
