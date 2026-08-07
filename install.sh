@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Installs vim + shell + tmux dotfiles by symlinking them into $HOME.
+# Installs vim + shell + tmux + herdr dotfiles by symlinking them into $HOME.
 # Existing files are backed up (never overwritten) before linking.
 # Safe to re-run.
 
@@ -28,7 +28,12 @@ link "$DOTFILES_DIR/vimrc"     "$HOME/.vimrc"
 link "$DOTFILES_DIR/bashrc"    "$HOME/.bashrc"
 link "$DOTFILES_DIR/tmux.conf" "$HOME/.tmux.conf"
 
-# 2. vim gruvbox colorscheme (referenced by vimrc)
+# 2. XDG config files. Only the config file is linked, never the whole herdr
+#    directory -- it also holds sockets, logs and session state at runtime.
+mkdir -p "$HOME/.config/herdr"
+link "$DOTFILES_DIR/herdr.toml" "$HOME/.config/herdr/config.toml"
+
+# 3. vim gruvbox colorscheme (referenced by vimrc)
 GRUVBOX="$HOME/.vim/pack/colors/start/gruvbox"
 if [ -d "$GRUVBOX/.git" ]; then
   echo "ok    gruvbox already installed"
@@ -38,7 +43,7 @@ else
   echo "clone gruvbox -> $GRUVBOX"
 fi
 
-# 3. macOS login shell is zsh, which does NOT read .bashrc on its own.
+# 4. macOS login shell is zsh, which does NOT read .bashrc on its own.
 #    Make sure .zshrc sources it so the prompt/aliases actually load.
 ZSHRC="$HOME/.zshrc"
 if [ ! -f "$ZSHRC" ]; then

@@ -1,0 +1,12 @@
+[keys]
+# `prefix+d` is unbound in herdr (only shift+d, close-workspace, is taken), so
+# reclaim tmux's universal detach key. `prefix+q` stays valid so the built-in
+# help and the docs are still telling the truth.
+detach = ["prefix+d", "prefix+q"]
+
+[ui]
+show_agent_labels_on_pane_borders = false
+
+[theme]
+name = "terminal"
+auto_switch = false
