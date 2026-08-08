@@ -7,6 +7,10 @@ detach = ["prefix+d", "prefix+q"]
 [ui]
 show_agent_labels_on_pane_borders = false
 
+# New tabs prompt for a name by default but new spaces do not, so prefix+shift+n
+# would silently create a generated name while prefix+c asks. Make them match.
+prompt_new_workspace_name = true
+
 [theme]
 name = "terminal"
 auto_switch = false
