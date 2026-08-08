@@ -12,6 +12,7 @@ show_agent_labels_on_pane_borders = false
 prompt_new_workspace_name = true
 
 agent_panel_sort = "spaces"
+
 [theme]
-name = "terminal"
+name = "catppuccin"
 auto_switch = false
