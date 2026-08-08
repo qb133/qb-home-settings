@@ -11,6 +11,7 @@ show_agent_labels_on_pane_borders = false
 # would silently create a generated name while prefix+c asks. Make them match.
 prompt_new_workspace_name = true
 
+agent_panel_sort = "spaces"
 [theme]
 name = "terminal"
 auto_switch = false
