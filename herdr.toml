@@ -1,3 +1,8 @@
+# Skip the first-run welcome flow. Dismissing it is not enough: herdr treats a
+# missing key as `true` ("Missing also shows onboarding" in its own generated
+# config), so it has to be written out explicitly.
+onboarding = false
+
 [keys]
 # `prefix+d` is unbound in herdr (only shift+d, close-workspace, is taken), so
 # reclaim tmux's universal detach key. `prefix+q` stays valid so the built-in
