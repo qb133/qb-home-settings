@@ -60,13 +60,13 @@ link "$DOTFILES_DIR/tmux.conf" "$HOME/.tmux.conf"
 mkdir -p "$HOME/.config/herdr"
 link "$DOTFILES_DIR/herdr.toml" "$HOME/.config/herdr/config.toml"
 
-# 2b. Claude Code. statusline.sh is ours alone, so it is linked. The two
-#     settings files are copied: Claude Code and herdr both write into
-#     settings.json at runtime (see copy() above).
+# 2b. Claude Code. statusline.sh is ours alone, so it is linked. settings.json
+#     is copied: Claude Code and herdr both write into it at runtime (see
+#     copy() above). settings.local.json is deliberately not managed here --
+#     that tier is for machine-specific overrides and Claude Code gitignores it.
 mkdir -p "$HOME/.claude"
-link "$DOTFILES_DIR/claude-statusline.sh"       "$HOME/.claude/statusline.sh"
-copy "$DOTFILES_DIR/claude-settings.json"       "$HOME/.claude/settings.json"
-copy "$DOTFILES_DIR/claude-settings.local.json" "$HOME/.claude/settings.local.json"
+link "$DOTFILES_DIR/claude-statusline.sh" "$HOME/.claude/statusline.sh"
+copy "$DOTFILES_DIR/claude-settings.json" "$HOME/.claude/settings.json"
 
 # 3. vim gruvbox colorscheme (referenced by vimrc)
 GRUVBOX="$HOME/.vim/pack/colors/start/gruvbox"

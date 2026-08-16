@@ -13,12 +13,11 @@ Mac and run the installer.
 | `herdr.toml` | `~/.config/herdr/config.toml` | link | Theme + keybindings for [herdr](https://herdr.dev). |
 | `claude-statusline.sh`       | `~/.claude/statusline.sh`       | link | Model name, token counts, colored context bar, git branch/dirty state. Needs `jq`. |
 | `claude-settings.json`       | `~/.claude/settings.json`       | copy | `skipAutoPermissionPrompt`, `voiceEnabled`, `curl` allowed, `defaultMode: auto`, plugin marketplaces, status line. `context7` MCP kept disabled. Model and effort level deliberately unset so the client defaults apply. |
-| `claude-settings.local.json` | `~/.claude/settings.local.json` | copy | Per-machine overrides (`enableAllProjectMcpServers: false`). |
 
 ## Two install modes
 
 Most files are **symlinked**, so `git pull` updates them live. The Claude
-settings files are **copied** instead, because Claude Code and herdr both write
+`settings.json` is **copied** instead, because Claude Code and herdr both write
 into `~/.claude/settings.json` at runtime — `/effort` writes `effortLevel`, auto
 mode writes an `autoMode.environment` block, and herdr installs a `SessionStart`
 hook. Under a symlink every one of those lands in this repo's working tree and
@@ -56,7 +55,7 @@ The installer:
   and `~/.claude/statusline.sh` to this repo (so `git pull` updates them). Only
   herdr's config *file* is linked, never the whole `~/.config/herdr` directory —
   that also holds sockets, logs and session state at runtime.
-- Copies the two Claude settings files into `~/.claude/` (see *Two install modes*).
+- Copies `claude-settings.json` into `~/.claude/` (see *Two install modes*).
 - Backs up any existing files to `<file>.backup-<timestamp>` first.
 - Clones the gruvbox colorscheme into `~/.vim/pack/colors/start/gruvbox`.
 - Adds `source ~/.bashrc` to `~/.zshrc` if it isn't already there.
@@ -93,6 +92,7 @@ anyway.
 | herdr's `SessionStart` hook in `~/.claude/settings.json`, and `~/.claude/hooks/herdr-agent-state.sh` | `herdr integration install claude` |
 | Claude Code plugins/skills (e.g. the `mattpocock` marketplace) | Declared in `claude-settings.json`; Claude Code installs them on first run |
 | `autoMode.environment` in `~/.claude/settings.json` | Machine-local. Left unset so auto mode falls back to trusting only the working directory and the current repo's remotes. |
+| `~/.claude/settings.local.json` | Machine-local by design — the "local" settings tier exists for per-machine overrides, and Claude Code gitignores it. Write one by hand if a machine needs to override something. |
 
 Account state and runtime data are excluded for the usual reasons: `~/.claude.json`
 holds OAuth tokens, and `~/.claude/`'s `history/`, `projects/`, `sessions/`,

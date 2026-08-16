@@ -13,7 +13,7 @@
   },
   "enabledPlugins": {
     "mattpocock-skills@mattpocock": true,
-    "marimo-pair@marimo-pair": true
+    "marimo-pair@marimo-pair": false
   },
   "extraKnownMarketplaces": {
     "mattpocock": {
