@@ -1,15 +1,37 @@
 # qb-home-settings
 
-My portable vim + shell + tmux + herdr settings. Clone onto a new Mac and run the installer.
+My portable vim + shell + tmux + herdr + Claude Code settings. Clone onto a new
+Mac and run the installer.
 
 ## What's included
 
-| File         | Installed to                   | Notes |
-|--------------|--------------------------------|-------|
-| `vimrc`      | `~/.vimrc`                     | Uses the gruvbox colorscheme (auto-cloned on install). |
-| `bashrc`     | `~/.bashrc`                    | Despite the name this is **zsh** config — prompt, aliases, `set -o vi`, `$EDITOR`. |
-| `tmux.conf`  | `~/.tmux.conf`                 | Mouse, focus events, vi copy mode, 50k scrollback, cwd-inheriting splits. |
-| `herdr.toml` | `~/.config/herdr/config.toml`  | Theme + keybindings for [herdr](https://herdr.dev). |
+| File | Installed to | Mode | Notes |
+|------|--------------|------|-------|
+| `vimrc`      | `~/.vimrc`                    | link | Uses the gruvbox colorscheme (auto-cloned on install). |
+| `bashrc`     | `~/.bashrc`                   | link | Despite the name this is **zsh** config — prompt, aliases, `set -o vi`, `$EDITOR`. |
+| `tmux.conf`  | `~/.tmux.conf`                | link | Mouse, focus events, vi copy mode, 50k scrollback, cwd-inheriting splits. |
+| `herdr.toml` | `~/.config/herdr/config.toml` | link | Theme + keybindings for [herdr](https://herdr.dev). |
+| `claude-statusline.sh`       | `~/.claude/statusline.sh`       | link | Model name, token counts, colored context bar, git branch/dirty state. Needs `jq`. |
+| `claude-settings.json`       | `~/.claude/settings.json`       | copy | `skipAutoPermissionPrompt`, `voiceEnabled`, `curl` allowed, `defaultMode: auto`, plugin marketplaces, status line. `context7` MCP kept disabled. Model and effort level deliberately unset so the client defaults apply. |
+| `claude-settings.local.json` | `~/.claude/settings.local.json` | copy | Per-machine overrides (`enableAllProjectMcpServers: false`). |
+
+## Two install modes
+
+Most files are **symlinked**, so `git pull` updates them live. The Claude
+settings files are **copied** instead, because Claude Code and herdr both write
+into `~/.claude/settings.json` at runtime — `/effort` writes `effortLevel`, auto
+mode writes an `autoMode.environment` block, and herdr installs a `SessionStart`
+hook. Under a symlink every one of those lands in this repo's working tree and
+leaves it permanently dirty.
+
+The trade-off: copied files are installed once, then left alone. On re-run the
+installer reports `skip … exists and differs` and prints a `diff` command rather
+than clobbering whatever the tools have since written. To force a fresh copy,
+delete the destination and re-run.
+
+No Claude sound hooks are configured, on purpose: `afplay` routes to the default
+output device, which pulls Bluetooth headphones away from whatever else they're
+playing.
 
 `tmux.conf` and `herdr.toml` are deliberately kept in sync: herdr owns the
 keybinding scheme and tmux follows it, so the same keys mean the same thing in
@@ -30,10 +52,11 @@ cd ~/qb-home-settings
 Then open a new terminal (or `source ~/.zshrc`).
 
 The installer:
-- Symlinks `~/.vimrc`, `~/.bashrc`, `~/.tmux.conf` and `~/.config/herdr/config.toml`
-  to this repo (so `git pull` updates them). Only herdr's config *file* is linked,
-  never the whole `~/.config/herdr` directory — that also holds sockets, logs and
-  session state at runtime.
+- Symlinks `~/.vimrc`, `~/.bashrc`, `~/.tmux.conf`, `~/.config/herdr/config.toml`
+  and `~/.claude/statusline.sh` to this repo (so `git pull` updates them). Only
+  herdr's config *file* is linked, never the whole `~/.config/herdr` directory —
+  that also holds sockets, logs and session state at runtime.
+- Copies the two Claude settings files into `~/.claude/` (see *Two install modes*).
 - Backs up any existing files to `<file>.backup-<timestamp>` first.
 - Clones the gruvbox colorscheme into `~/.vim/pack/colors/start/gruvbox`.
 - Adds `source ~/.bashrc` to `~/.zshrc` if it isn't already there.
@@ -52,6 +75,26 @@ Note that `herdr config reset-keys` moves `config.toml` aside and writes a fresh
 one, which would replace the symlink with a real file. Re-run `./install.sh`
 afterwards to relink.
 
+`claude-statusline.sh` needs **`jq`** (`brew install jq`).
+
 This package intentionally does **not** carry the full original shell chain
 (`.zshenv`, `.zprofile` with Homebrew/nvm/postgres). Install those tools
 separately on the new machine as needed.
+
+## Tool-managed content is not vendored here
+
+Where another tool owns a file, this repo records the command to regenerate it
+rather than keeping a snapshot that goes stale. A copy would drift from whatever
+version the tool currently installs, and in some cases the tool overwrites it
+anyway.
+
+| Not in this repo | Get it with |
+|------------------|-------------|
+| herdr's `SessionStart` hook in `~/.claude/settings.json`, and `~/.claude/hooks/herdr-agent-state.sh` | `herdr integration install claude` |
+| Claude Code plugins/skills (e.g. the `mattpocock` marketplace) | Declared in `claude-settings.json`; Claude Code installs them on first run |
+| `autoMode.environment` in `~/.claude/settings.json` | Machine-local. Left unset so auto mode falls back to trusting only the working directory and the current repo's remotes. |
+
+Account state and runtime data are excluded for the usual reasons: `~/.claude.json`
+holds OAuth tokens, and `~/.claude/`'s `history/`, `projects/`, `sessions/`,
+`shell-snapshots/`, `telemetry/`, `tasks/`, `plans/`, `cache/` and `plugins/`
+directories all regenerate on their own.

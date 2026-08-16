@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 #
-# Installs vim + shell + tmux + herdr dotfiles by symlinking them into $HOME.
+# Installs vim + shell + tmux + herdr + claude dotfiles into $HOME.
 # Existing files are backed up (never overwritten) before linking.
 # Safe to re-run.
+#
+# Two install modes, chosen per file:
+#   link()  static configs no tool rewrites -- symlinked, so `git pull` updates them.
+#   copy()  files the tool itself writes to (Claude's settings.json). Symlinking
+#           those would leave this repo permanently dirty, so they are copied on
+#           first install and then LEFT ALONE. See README.
 
 set -euo pipefail
 
@@ -23,6 +29,27 @@ link() {
   echo "link  $dest -> $src"
 }
 
+# Copy, but never clobber a file the tool has since edited. Claude Code writes
+# effortLevel/autoMode into settings.json and herdr installs a SessionStart hook
+# there, so an unconditional copy on re-run would silently discard both.
+copy() {
+  local src="$1" dest="$2"
+  if [ -L "$dest" ]; then
+    mv "$dest" "$dest.backup-$TS"
+    echo "backup $dest (was a symlink) -> $dest.backup-$TS"
+  elif [ -e "$dest" ]; then
+    if cmp -s "$src" "$dest"; then
+      echo "ok    $dest already up to date"
+    else
+      echo "skip  $dest exists and differs -- left alone"
+      echo "      diff:  diff '$dest' '$src'"
+    fi
+    return
+  fi
+  cp "$src" "$dest"
+  echo "copy  $dest <- $src"
+}
+
 # 1. dotfiles
 link "$DOTFILES_DIR/vimrc"     "$HOME/.vimrc"
 link "$DOTFILES_DIR/bashrc"    "$HOME/.bashrc"
@@ -32,6 +59,14 @@ link "$DOTFILES_DIR/tmux.conf" "$HOME/.tmux.conf"
 #    directory -- it also holds sockets, logs and session state at runtime.
 mkdir -p "$HOME/.config/herdr"
 link "$DOTFILES_DIR/herdr.toml" "$HOME/.config/herdr/config.toml"
+
+# 2b. Claude Code. statusline.sh is ours alone, so it is linked. The two
+#     settings files are copied: Claude Code and herdr both write into
+#     settings.json at runtime (see copy() above).
+mkdir -p "$HOME/.claude"
+link "$DOTFILES_DIR/claude-statusline.sh"       "$HOME/.claude/statusline.sh"
+copy "$DOTFILES_DIR/claude-settings.json"       "$HOME/.claude/settings.json"
+copy "$DOTFILES_DIR/claude-settings.local.json" "$HOME/.claude/settings.local.json"
 
 # 3. vim gruvbox colorscheme (referenced by vimrc)
 GRUVBOX="$HOME/.vim/pack/colors/start/gruvbox"
