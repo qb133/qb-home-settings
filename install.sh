@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 #
-# Installs vim + shell + tmux + herdr + claude dotfiles into $HOME.
+# Installs vim + shell + tmux + herdr + Claude + Codex dotfiles into $HOME.
 # Existing files are backed up (never overwritten) before linking.
 # Safe to re-run.
 #
 # Two install modes, chosen per file:
 #   link()  static configs no tool rewrites -- symlinked, so `git pull` updates them.
-#   copy()  files the tool itself writes to (Claude's settings.json). Symlinking
-#           those would leave this repo permanently dirty, so they are copied on
-#           first install and then LEFT ALONE. See README.
+#   copy()  files the tools themselves write to (Claude and Codex config).
+#           Symlinking those would leave this repo permanently dirty, so they
+#           are copied on first install and then LEFT ALONE. See README.
 
 set -euo pipefail
 
@@ -67,6 +67,12 @@ link "$DOTFILES_DIR/herdr.toml" "$HOME/.config/herdr/config.toml"
 mkdir -p "$HOME/.claude"
 link "$DOTFILES_DIR/claude-statusline.sh" "$HOME/.claude/statusline.sh"
 copy "$DOTFILES_DIR/claude-settings.json" "$HOME/.claude/settings.json"
+
+# 2c. Codex. config.toml accumulates project trust, migration notices, and other
+#     machine-local state, so install only our portable seed and let Codex own
+#     the resulting file afterwards.
+mkdir -p "$HOME/.codex"
+copy "$DOTFILES_DIR/codex-config.toml" "$HOME/.codex/config.toml"
 
 # 3. vim gruvbox colorscheme (referenced by vimrc)
 GRUVBOX="$HOME/.vim/pack/colors/start/gruvbox"

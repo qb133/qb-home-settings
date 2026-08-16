@@ -1,0 +1,9 @@
+personality = "pragmatic"
+
+[tui]
+status_line = [
+  "model-with-reasoning",
+  "context-remaining",
+  "current-dir",
+  "git-branch",
+]
