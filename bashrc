@@ -33,9 +33,21 @@ alias ll='ls -l'
 alias lla='ls -la'
 
 set -o vi
-# bash's vi mode leaves ^R on reverse search; zsh's viins keymap binds it to
-# redisplay, which does nothing. Put it back.
-[ -n "$ZSH_VERSION" ] && bindkey -M viins '^R' history-incremental-search-backward
+if [ -n "$ZSH_VERSION" ]; then
+  # bash's vi mode leaves ^R on reverse search; zsh's viins keymap binds it to
+  # redisplay, which does nothing. Put it back.
+  bindkey -M viins '^R' history-incremental-search-backward
+
+  # Own compinit instead of letting some other tool pull it in as a side effect.
+  # nvm's bash_completion calls it, so machines with nvm get a completion system
+  # by accident and machines without it get none at all.
+  autoload -Uz compinit && compinit
+
+  # compinit binds \e/ to _history-complete-older, which turns ESC into a prefix
+  # key: a fast ESC-/ then completes instead of entering vi search. Must come
+  # after compinit, which is why this cannot sit next to the ^R line above.
+  bindkey -M viins -r '\e/' '\e,'
+fi
 
 export VISUAL=vim EDITOR=vim
 
