@@ -1,6 +1,7 @@
 # qb-home-settings
 
-Portable vim, shell, tmux, herdr, Claude Code, and Codex settings for a Mac.
+Portable vim, shell, tmux, herdr, Claude Code, and Codex settings for Linux,
+macOS, and WSL.
 
 ## Install
 
@@ -10,8 +11,7 @@ cd ~/qb-home-settings
 ./install.sh
 ```
 
-Then open a new terminal or run `source ~/.zshrc`. The installer is safe to
-re-run.
+Then open a new terminal. The installer is safe to re-run.
 
 ## Settings
 
@@ -41,12 +41,17 @@ local under `~/.codex/`.
 
 ## Notes
 
-- `bashrc` contains zsh configuration. The installer ensures `~/.zshrc`
-  sources it.
+- `bashrc` is shared by bash and zsh, so one file covers Linux, macOS, and
+  WSL. Only the prompt and the `^R` binding differ between the shells; keep
+  everything else in the common section. bash reads `~/.bashrc` itself, and the
+  installer points `~/.zshrc` at it wherever zsh is present.
+- On Linux and WSL, a *login* bash reads `~/.profile` or `~/.bash_profile`, not
+  `~/.bashrc`. Every mainstream distro ships a `~/.profile` that sources
+  `~/.bashrc`; if a machine does not, add that line by hand.
 - The installer clones gruvbox into `~/.vim/pack/colors/start/gruvbox`.
 - `tmux.conf` and `herdr.toml` share a keybinding scheme; update both when
   changing an aligned binding.
-- `claude-statusline.sh` requires `jq` (`brew install jq`).
+- `claude-statusline.sh` requires `jq` (`brew install jq`, `apt install jq`).
 - `bashrc` defines `claude-qwen`, which runs Claude Code against the local
   Qwen3.8-27B server instead of Anthropic. Unlike everything else here it is
   **not portable**: the base URL is a Meshnet host and the token limits are

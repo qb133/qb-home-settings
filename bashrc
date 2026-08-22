@@ -1,17 +1,41 @@
-# NOTE: despite the name, this file uses zsh syntax. It is sourced by ~/.zshrc
-# (see README). The zsh prompt escapes and `autoload` will not work in real bash.
+# Shared interactive shell config for bash and zsh, so one file covers Linux,
+# macOS and WSL. Linked to ~/.bashrc, which bash reads directly; where zsh is
+# the login shell the installer also has ~/.zshrc source it.
+#
+# Everything here must be valid in BOTH shells. Only the prompt and the key
+# bindings differ -- those have no common syntax. Keep the rest shared.
 
-autoload -U colors && colors
+# Interactive shells only. scp, rsync and `ssh host cmd` also read this file,
+# and their protocols break on any stray output from it.
+case $- in *i*) ;; *) return ;; esac
 
-export PS1="%{$fg[green]%}%n@%m%{$reset_color%}: [ %{$fg[blue]%}%~%{$reset_color%} ]
-%{$fg[green]%}$%{$reset_color%} "
+# Never export PS1. bash inherits an exported PS1 from the environment, so an
+# exported zsh prompt makes every child bash print %n@%m and %{...%} literally.
+if [ -n "$ZSH_VERSION" ]; then
+  PS1='%F{green}%n@%m%f: [ %F{blue}%~%f ]
+%F{green}$%f '
+else
+  PS1='\[\e[32m\]\u@\h\[\e[0m\]: [ \[\e[34m\]\w\[\e[0m\] ]
+\[\e[32m\]\$\[\e[0m\] '
+fi
 
 alias ..='cd ..'
-alias ls='ls -GH'
+
+# BSD ls (macOS) colours with -G, GNU ls (Linux, WSL) with --color, and -G on
+# GNU means something else entirely. Recent macOS accepts --color as well, so
+# probe for it rather than branching on uname.
+if ls --color=auto . >/dev/null 2>&1; then
+  alias ls='ls -H --color=auto'
+else
+  alias ls='ls -GH'
+fi
 alias ll='ls -l'
 alias lla='ls -la'
 
 set -o vi
+# bash's vi mode leaves ^R on reverse search; zsh's viins keymap binds it to
+# redisplay, which does nothing. Put it back.
+[ -n "$ZSH_VERSION" ] && bindkey -M viins '^R' history-incremental-search-backward
 
 export VISUAL=vim EDITOR=vim
 

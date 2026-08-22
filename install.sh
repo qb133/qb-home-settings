@@ -84,10 +84,13 @@ else
   echo "clone gruvbox -> $GRUVBOX"
 fi
 
-# 4. macOS login shell is zsh, which does NOT read .bashrc on its own.
-#    Make sure .zshrc sources it so the prompt/aliases actually load.
+# 4. bash reads ~/.bashrc on its own, but zsh (the macOS login shell) does not.
+#    Wire it up only where zsh exists, so a bash-only Linux or WSL box does not
+#    get a stray ~/.zshrc it will never read.
 ZSHRC="$HOME/.zshrc"
-if [ ! -f "$ZSHRC" ]; then
+if ! command -v zsh >/dev/null 2>&1; then
+  echo "skip  no zsh on this machine -- bash reads ~/.bashrc directly"
+elif [ ! -f "$ZSHRC" ]; then
   echo "source ~/.bashrc" > "$ZSHRC"
   echo "create $ZSHRC (sources ~/.bashrc)"
 elif ! grep -Eq '(source|\.) +(~|"?\$HOME"?)/\.bashrc' "$ZSHRC"; then
@@ -98,4 +101,4 @@ else
 fi
 
 echo
-echo "Done. Open a new terminal (or run: source ~/.zshrc) to apply."
+echo "Done. Open a new terminal to apply."
