@@ -100,5 +100,29 @@ else
   echo "ok    $ZSHRC already sources ~/.bashrc"
 fi
 
+# 5. Anything driven over SSH -- Moshi detecting herdr, mosh launching
+#    mosh-server -- resolves binaries on the NON-interactive PATH, and
+#    `ssh host '<cmd>'` reads only ~/.zshenv, never ~/.zshrc or ~/.zprofile.
+#    ~/.zshenv itself stays unmanaged (machine-specific cargo, nvm, Homebrew
+#    setup lives there), so wire in a source line, as with ~/.zshrc above.
+ZSHENV="$HOME/.zshenv"
+if ! command -v zsh >/dev/null 2>&1; then
+  echo "skip  no zsh on this machine -- nothing to wire into ~/.zshenv"
+else
+  link "$DOTFILES_DIR/zshenv-path" "$HOME/.zshenv-path"
+  # Guarded: an unguarded source makes EVERY zsh -- including the scripted and
+  # SSH ones this exists for -- print an error if the repo is ever moved away.
+  SOURCE_LINE='[ -r "$HOME/.zshenv-path" ] && . "$HOME/.zshenv-path"'
+  if [ ! -f "$ZSHENV" ]; then
+    echo "$SOURCE_LINE" > "$ZSHENV"
+    echo "create $ZSHENV (sources ~/.zshenv-path)"
+  elif ! grep -q '\.zshenv-path' "$ZSHENV"; then
+    printf '\n%s\n' "$SOURCE_LINE" >> "$ZSHENV"
+    echo "edit  added '. ~/.zshenv-path' to $ZSHENV"
+  else
+    echo "ok    $ZSHENV already sources ~/.zshenv-path"
+  fi
+fi
+
 echo
 echo "Done. Open a new terminal to apply."

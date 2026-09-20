@@ -1,0 +1,29 @@
+# PATH for non-interactive shells. Sourced from ~/.zshenv.
+#
+# `ssh host '<cmd>'` runs a non-login, non-interactive zsh, which reads neither
+# ~/.zshrc nor ~/.zprofile -- only ~/.zshenv. So the PATH additions made by
+# those files do not exist for anything driving this machine over SSH: Moshi
+# detects herdr by running `command -v herdr`, and mosh bootstraps by launching
+# mosh-server, and both fail in ways that look like app bugs rather than PATH
+# bugs. Keep the interactive PATH in bashrc; this file is only the subset that
+# remote invocation needs.
+#
+# Cheap and side-effect free on purpose -- ~/.zshenv runs on every zsh,
+# including every script. No subshells, so no `eval "$(brew shellenv)"`.
+
+# Lowest priority first: each directory that exists is prepended, so the last
+# entry listed ends up first on PATH.
+for dir in \
+  /home/linuxbrew/.linuxbrew/bin \
+  /usr/local/bin \
+  /opt/homebrew/sbin \
+  /opt/homebrew/bin \
+  "$HOME/.local/bin"
+do
+  case ":${PATH}:" in
+    *:"$dir":*) ;;
+    *) [ -d "$dir" ] && PATH="$dir:$PATH" ;;
+  esac
+done
+unset dir
+export PATH

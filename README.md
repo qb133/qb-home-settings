@@ -19,6 +19,7 @@ Then open a new terminal. The installer is safe to re-run.
 |------|--------------|------|
 | `vimrc` | `~/.vimrc` | link |
 | `bashrc` | `~/.bashrc` | link |
+| `zshenv-path` | `~/.zshenv-path` | link |
 | `tmux.conf` | `~/.tmux.conf` | link |
 | `herdr.toml` | `~/.config/herdr/config.toml` | link |
 | `claude-statusline.sh` | `~/.claude/statusline.sh` | link |
@@ -59,8 +60,16 @@ local under `~/.codex/`.
   unaffected — the exports are scoped to the function.
 - tmux and herdr are optional; their settings remain inert until the tools are
   installed.
-- This repo deliberately excludes machine-specific `.zshenv`, `.zprofile`,
-  Homebrew, nvm, and PostgreSQL setup.
+- `zshenv-path` supplies the *non-interactive* PATH: `~/.local/bin` and
+  Homebrew, for tools invoked as `ssh host '<cmd>'`. That form runs a
+  non-login, non-interactive zsh, which reads only `~/.zshenv` — so without it
+  Moshi cannot detect herdr and mosh cannot launch `mosh-server`, both failing
+  as if the app were broken. The interactive PATH still comes from `bashrc`
+  and `~/.zprofile`; keep this file to the subset remote invocation needs.
+- `~/.zshenv` and `~/.zprofile` themselves stay unmanaged — they hold
+  machine-specific cargo, nvm, and Homebrew setup. The installer only appends
+  a line sourcing `~/.zshenv-path` to `~/.zshenv`, the same way it points
+  `~/.zshrc` at `~/.bashrc`. PostgreSQL setup remains excluded entirely.
 
 ## Tool-managed integrations
 
