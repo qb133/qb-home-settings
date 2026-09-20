@@ -63,7 +63,7 @@ export VISUAL=vim EDITOR=vim
 # `local -x` scopes every export to this call, so a plain `claude` in the same
 # shell still reaches Anthropic. See qb-local-llm-setup, SETTINGS.md section 5C.
 claude-qwen() {
-  local -x ANTHROPIC_BASE_URL="http://kyubok-alps.nord:8000"   # no /v1 -- Claude Code appends it
+  local -x ANTHROPIC_BASE_URL="http://wsl:8000"                # no /v1 -- Claude Code appends it
   local -x ANTHROPIC_MODEL="qwen3.8-27b"
   local -x ANTHROPIC_DEFAULT_HAIKU_MODEL="qwen3.8-27b"         # background tasks hit the local model too
   local -x CLAUDE_CODE_MAX_OUTPUT_TOKENS=40000

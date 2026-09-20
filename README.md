@@ -55,7 +55,7 @@ local under `~/.codex/`.
 - `claude-statusline.sh` requires `jq` (`brew install jq`, `apt install jq`).
 - `bashrc` defines `claude-qwen`, which runs Claude Code against the local
   Qwen3.8-27B server instead of Anthropic. Unlike everything else here it is
-  **not portable**: the base URL is a Meshnet host and the token limits are
+  **not portable**: the base URL is a tailnet host and the token limits are
   correct only for that model. See `qb-local-llm-setup`. A plain `claude` is
   unaffected — the exports are scoped to the function.
 - tmux and herdr are optional; their settings remain inert until the tools are
